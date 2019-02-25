@@ -12,6 +12,12 @@
         fill: none;
     }
 
+    .grid line {
+        stroke: lightgrey;
+        stroke-opacity: 0.5;
+        shape-rendering: crispEdges;
+    }
+
     .axis path,
     .axis line {
         fill: none;
@@ -58,6 +64,18 @@
         .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
 
+    // gridlines in x axis function
+    function make_x_gridlines() {
+        return d3.axisBottom(x)
+            .ticks(49)
+    }
+
+    // gridlines in y axis function
+    function make_y_gridlines() {
+        return d3.axisLeft(y)
+            .ticks(11)
+    }
+
 
     // Get the data
     d3.csv("shootings.csv", function(error, data) {
@@ -70,6 +88,24 @@
         x.domain(d3.extent(data, function(d) { return d.Year; }));
         y.domain([0, d3.max(data, function(d) { return d.Shootings; })]);
 
+
+        // add the X gridlines
+        svg.append("g")
+            .attr("class", "grid")
+            .attr("transform", "translate(0," + height + ")")
+            .call(make_x_gridlines()
+                .tickSize(-height)
+                .tickFormat("")
+            );
+
+        // add the Y gridlines
+        svg.append("g")
+            .attr("class", "grid")
+            .call(make_y_gridlines()
+                .tickSize(-width)
+                .tickFormat("")
+            )
+        ;
 
         // Nest the entries by symbol
         var dataNest = d3.nest()
